@@ -1,0 +1,86 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+.finance-container {
+    background-color: #1e3799;
+    padding: 15px; /* צומצם מ-20 */
+    border-radius: 10px;
+    width: 320px;
+    height: 600px; /* זהה למתמטי */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+h2 { margin: 0 0 10px 0; font-size: 1.1rem; text-align: center; }
+
+label { font-size: 0.85rem; margin-top: 8px; display: block; }
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border-radius: 5px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.calc-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #4cd137;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.result-box {
+    margin-top: 15px;
+    background: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 40px;
+}
+
+.player-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.player-controls button {
+    padding: 8px 15px;
+    background: #34495e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.nav-button {
+    margin-top: auto; /* מצמיד לתחתית */
+    background-color: #0fbcf9;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}

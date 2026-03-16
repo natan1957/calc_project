@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>מחשבון מתמטי</title>
+    <link rel="stylesheet" href="math.css">
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="display" readonly>
+        
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendOperator('/')">/</button>
+            <button onclick="appendOperator('*')">*</button>
+            <button onclick="appendOperator('-')">-</button>
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button onclick="appendOperator('+')">+</button>
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button onclick="calculate()">=</button>
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button onclick="appendNumber('0')">0</button>
+        </div>
+
+        <div class="mic-panel">
+            <div class="meter-container">
+                <div id="volumeMeter" class="meter-bar"></div>
+            </div>
+            <div class="slider-row">
+                <input type="range" id="gainSlider" min="0" max="2" step="0.1" value="0.8">
+                <span id="gainValue">0.8</span>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <button id="startRec" onclick="startRecording()">הקלט 🎙️</button>
+            <button id="stopRec" onclick="stopRecording()" disabled>עצור ⏹</button>
+            <button id="playRec" onclick="playLocalRecording()" disabled>נגן 🔊</button>
+            <button onclick="deleteRecording()">מחק 🗑️</button>
+        </div>
+
+        <a href="../fin_calc/fin.html" class="nav-button">למחשבון פיננסי ⮕</a>
+    </div>
+
+    <script src="../db_core.js"></script>
+    <script src="../recorder.js"></script>
+    <script src="../player.js"></script>
+    <script src="math.js"></script>
+</body>
+</html>
