@@ -1,5 +1,4 @@
 let currentAudio = null;
-const STORE_NAME = "shared_audio";
 
 // פונקציית עזר לוודא שבסיס הנתונים זמין
 async function getDB() {
@@ -13,7 +12,6 @@ async function getDB() {
 
 async function playAudio() {
     console.log("ניסיון השמעה...");
-    
     if (currentAudio && !currentAudio.paused) {
         currentAudio.pause();
         return;
@@ -51,14 +49,11 @@ function pauseAudio() {
 
 async function deleteAudio() {
     if (!confirm("האם למחוק את ההקלטה?")) return;
-    
     try {
         const db = await getDB();
         if (!db) return;
-        
         const transaction = db.transaction(STORE_NAME, "readwrite");
         transaction.objectStore(STORE_NAME).delete("shared_audio");
-        
         transaction.oncomplete = () => {
             if (currentAudio) { 
                 currentAudio.pause(); 
@@ -85,11 +80,9 @@ function closeExportModal() {
 
 async function processExport(type) {
     closeExportModal();
-    
     try {
         const db = await getDB();
         if (!db) return;
-        
         const transaction = db.transaction(STORE_NAME, "readonly");
         const request = transaction.objectStore(STORE_NAME).get("shared_audio");
 
@@ -106,12 +99,12 @@ async function processExport(type) {
 
             switch (type) {
                 case 'disk':
-                    downloadDirectly(blob, fileName);
+                    // שינוי כאן: קריאה לפונקציה שמכריחה דיאלוג
+                    await saveToDisk(blob, fileName);
                     break;
                     
                 case 'whatsapp':
                     if (isMobile && navigator.share) {
-                        // אפשרות 2: שיתוף קובץ ישיר בנייד
                         const file = new File([blob], fileName, { type: "audio/webm" });
                         await navigator.share({
                             files: [file],
@@ -119,7 +112,6 @@ async function processExport(type) {
                             text: message
                         }).catch(() => {});
                     } else {
-                        // מחשב: הורדה ופתיחת וואטסאפ
                         downloadDirectly(blob, fileName);
                         window.location.href = `whatsapp://send?text=${encodeURIComponent(message)}`;
                     }
@@ -146,6 +138,7 @@ async function processExport(type) {
     }
 }
 
+// פונקציה להורדה ישירה (מובייל/דפדפנים ישנים)
 function downloadDirectly(blob, fileName) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -155,4 +148,26 @@ function downloadDirectly(blob, fileName) {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
+// פונקציה להצגת דיאלוג "שמירה בשם" (דסקטופ מודרני)
+async function saveToDisk(blob, fileName) {
+    if (window.showSaveFilePicker) {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                    description: 'Audio File',
+                    accept: { 'audio/webm': ['.webm'] },
+                }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+        } catch (err) {
+            if (err.name !== 'AbortError') downloadDirectly(blob, fileName);
+        }
+    } else {
+        downloadDirectly(blob, fileName);
+    }
 }
