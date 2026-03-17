@@ -27,9 +27,23 @@
             <button onclick="playAudio()">נגן ▶️</button>
             <button onclick="pauseAudio()">השהה ⏸</button>
             <button onclick="deleteAudio()">מחק 🗑️</button>
+            <button onclick="exportAudio()">ייצוא שמע 📤</button>
         </div>
 
         <a href="../math_calc/math.html" class="nav-button">למחשבון מתמטי ⮕</a>
+    </div>
+
+    <div id="exportModal" class="modal" hidden>
+        <div class="modal-content">
+            <h3>בחר יעד לייצוא</h3>
+            <div class="modal-buttons">
+                <button onclick="processExport('disk')">💾 שמירה בשם לדיסק</button>
+                <button onclick="processExport('whatsapp')">💬 שליחה בוואטסאפ</button>
+                <button onclick="processExport('gmail')">📧 שליחה ב-Gmail</button>
+                <button onclick="processExport('share')">📱 שיתוף מערכתי אחר</button>
+                <button class="cancel-btn" onclick="closeExportModal()">ביטול</button>
+            </div>
+        </div>
     </div>
 
     <script src="../db_core.js"></script>
