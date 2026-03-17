@@ -1,14 +1,14 @@
-// חיווי גרסה בקונסולה לבדיקה מהירה בטלפון
-console.log("Finance Logic Loaded - Version 1.0.4");
+// חיווי גרסה בקונסולה - מעודכן ל-1.0.5
+console.log("Finance Logic Loaded - Version 1.0.5");
 
 window.onload = () => {
     const saved = localStorage.getItem('shared_result');
     const loanInput = document.getElementById('loanAmount');
     
-    // בדיקה שהאלמנט קיים לפני השמת ערך
+    // שחזור נתונים בזהירות
     if (saved && loanInput) {
         loanInput.value = saved;
-        console.log("נתונים שוחזרו מהזיכרון");
+        console.log("נתונים שוחזרו מגרסה קודמת");
     }
 };
 
@@ -22,8 +22,9 @@ function calculateLoan() {
     const r = (parseFloat(interestEl.value) / 100) / 12;
     const m = parseFloat(paymentEl.value);
 
-    // ניקוי תוצאה קודמת
+    // חיווי ויזואלי לתחילת חישוב
     resultEl.innerText = "מחשב...";
+    resultEl.style.color = "inherit";
 
     if (!P || !r || !m) { 
         alert("נא למלא את כל השדות בצורה תקינה"); 
@@ -31,18 +32,15 @@ function calculateLoan() {
         return; 
     }
 
-    // בדיקה מתמטית: האם הריבית החודשית גבוהה מההחזר?
     const check = 1 - (r * P) / m;
     if (check <= 0) {
         resultEl.style.color = "red";
-        resultEl.innerText = "ההחזר החודשי נמוך מדי! הוא לא מכסה אפילו את הריבית.";
+        resultEl.innerText = "ההחזר החודשי נמוך מדי! הוא לא מכסה את הריבית.";
         return;
     }
 
-    resultEl.style.color = "inherit";
     const months = Math.ceil(-Math.log(check) / Math.log(1 + r));
     
-    // הצגת התוצאה בצורה ברורה
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
     
@@ -53,6 +51,6 @@ function calculateLoan() {
     
     resultEl.innerText = resultText;
     
-    // שמירת הסכום לשימוש עתידי (localStorage)
+    // שמירה מעודכנת
     localStorage.setItem('shared_result', P);
 }
