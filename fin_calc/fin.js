@@ -1,30 +1,63 @@
-// חיווי גרסה בקונסולה - מעודכן ל-1.0.5
-console.log("Finance Logic Loaded - Version 1.0.5");
+/* PROTOCOL: OPERATING ROOM 
+   FILE: fin.js 
+*/
+console.log("Finance Logic Loaded - Version 1.0.6 (19/03/2026 21:20)");
 
-window.onload = () => {
+// אתחול וטעינת נתונים
+window.addEventListener('load', () => {
+    const display = document.getElementById('display');
     const saved = localStorage.getItem('shared_result');
-    const loanInput = document.getElementById('loanAmount');
     
-    // שחזור נתונים בזהירות
-    if (saved && loanInput) {
-        loanInput.value = saved;
-        console.log("נתונים שוחזרו מגרסה קודמת");
+    if (saved && display) {
+        display.value = saved;
+        console.log("נתונים שוחזרו מגרסה קודמת: " + saved);
     }
-};
+});
 
+// פונקציות מחשבון סטנדרטיות (עבור הכפתורים ב-HTML)
+function appendNumber(num) {
+    const display = document.getElementById('display');
+    if (display.value === "0") display.value = num;
+    else display.value += num;
+}
+
+function appendOperator(op) {
+    const display = document.getElementById('display');
+    display.value += op;
+}
+
+function clearDisplay() {
+    const display = document.getElementById('display');
+    display.value = "";
+}
+
+function calculate() {
+    const display = document.getElementById('display');
+    try {
+        // ביצוע חישוב בטוח ושמירה ב-LocalStorage
+        const result = eval(display.value);
+        display.value = result;
+        localStorage.setItem('shared_result', result);
+    } catch (e) {
+        alert("ביטוי לא תקין");
+        display.value = "";
+    }
+}
+
+// לוגיקת מחשבון הלוואה (אם קיימים שדות רלוונטיים)
 function calculateLoan() {
     const amountEl = document.getElementById('loanAmount');
     const interestEl = document.getElementById('interestRate');
     const paymentEl = document.getElementById('monthlyPayment');
     const resultEl = document.getElementById('result');
 
+    if (!amountEl || !interestEl || !paymentEl || !resultEl) return;
+
     const P = parseFloat(amountEl.value);
     const r = (parseFloat(interestEl.value) / 100) / 12;
     const m = parseFloat(paymentEl.value);
 
-    // חיווי ויזואלי לתחילת חישוב
     resultEl.innerText = "מחשב...";
-    resultEl.style.color = "inherit";
 
     if (!P || !r || !m) { 
         alert("נא למלא את כל השדות בצורה תקינה"); 
@@ -40,7 +73,6 @@ function calculateLoan() {
     }
 
     const months = Math.ceil(-Math.log(check) / Math.log(1 + r));
-    
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
     
@@ -50,7 +82,5 @@ function calculateLoan() {
     }
     
     resultEl.innerText = resultText;
-    
-    // שמירה מעודכנת
     localStorage.setItem('shared_result', P);
 }
