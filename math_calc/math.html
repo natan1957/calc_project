@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>מחשבון מתמטי</title>
     <link rel="stylesheet" href="math.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="calculator">
@@ -42,8 +44,9 @@
         <div class="player-controls">
             <button id="startRec" onclick="startRecording()">הקלט 🎙️</button>
             <button id="stopRec" onclick="stopRecording()" disabled>עצור ⏹</button>
-            <button id="playRec" onclick="playLocalRecording()" disabled>נגן 🔊</button>
-            <button onclick="deleteRecording()">מחק 🗑️</button>
+            <button id="playRec" onclick="playAudio()">נגן 🔊</button>
+            <button id="exportBtn" onclick="exportAudio()">ייצוא 💾</button>
+            <button id="deleteBtn" onclick="deleteAudio()">מחק 🗑️</button>
         </div>
 
         <a href="../fin_calc/fin.html" class="nav-button">למחשבון פיננסי ⮕</a>

@@ -6,165 +6,94 @@ body {
     margin: 0;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
-    /* מונע גלילה מיותרת ברקע כשהמודאל פתוח */
     overflow: hidden; 
 }
 
-.finance-container {
-    background-color: #1e3799;
-    padding: 15px;
-    border-radius: 10px;
-    width: 320px;
-    height: 600px;
-    color: white;
+.calculator {
+    background-color: #f0f0f0;
+    padding: 20px;
+    width: 95%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    position: relative;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-h2 { margin: 0 0 10px 0; font-size: 1.1rem; text-align: center; }
-
-label { font-size: 0.85rem; margin-top: 8px; display: block; opacity: 0.9; }
-
-input {
+.display-area input {
     width: 100%;
-    padding: 10px;
-    margin-top: 4px;
-    border-radius: 5px;
-    border: none;
-    box-sizing: border-box;
-    font-size: 1rem; /* חשוב: מונע זום אוטומטי בדפדפנים בנייד */
-}
-
-.calc-btn {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    background-color: #4cd137;
-    border: none;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: transform 0.1s;
-}
-
-.calc-btn:active { transform: scale(0.98); }
-
-.result-box {
-    margin-top: 15px;
+    padding: 15px;
     background: white;
-    color: black;
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
-    min-height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 2rem;
+    text-align: right;
+    margin-bottom: 15px;
 }
 
-.player-controls {
+/* הגדרת הגריד 4x4 */
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* עיצוב כפתורי המחשבון לפי התמונה האפורה */
+.buttons button {
+    padding: 20px 0;
+    background: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.4rem;
+    font-weight: bold;
+    transition: background 0.1s;
+}
+
+.buttons button:active { background: #333; }
+
+.mic-panel {
     display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+#gainSlider { width: 100%; margin: 10px 0; }
+.gain-label { align-self: flex-end; font-weight: bold; font-size: 1.2rem; }
+
+/* כפתורי השליטה בתחתית */
+.player-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-top: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
 }
 
 .player-controls button {
-    padding: 10px 12px;
+    padding: 12px 5px;
     background: #34495e;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 0.75rem;
-    flex: 1;
-    min-width: 65px;
-}
-
-.nav-button {
-    margin-top: auto;
-    background-color: #0fbcf9;
-    padding: 12px;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 0.9rem;
-}
-
-/* עיצוב מספר הגרסה בתחתית */
-.version-tag {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.5);
-    text-align: center;
-    margin-top: 8px;
-}
-
-/* --- עיצוב דיאלוג ייצוא (Modal) --- */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-.modal[hidden] { display: none; }
-
-.modal-content {
-    background-color: white;
-    color: black;
-    padding: 20px;
-    border-radius: 12px;
-    width: 85%;
-    max-width: 280px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-}
-
-.modal-content h3 { margin-top: 0; font-size: 1.1rem; color: #1e3799; }
-
-.modal-buttons {
+    font-size: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
+    align-items: center;
+    gap: 4px;
 }
 
-.modal-buttons button {
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.95rem;
-    text-align: right;
-    padding-right: 20px;
-}
+.player-controls button:disabled { opacity: 0.5; }
 
-.modal-buttons button:not(.cancel-btn) {
-    background-color: #f8f9fa;
-    color: #1e3799;
-    border: 1px solid #dcdde1;
-}
-
-.modal-buttons .cancel-btn {
-    background-color: #e84118;
+.nav-container { display: flex; justify-content: flex-end; margin-top: 15px; }
+.nav-button {
+    background-color: #0fbcf9;
+    padding: 10px 20px;
     color: white;
-    margin-top: 5px;
-    text-align: center;
-    padding-right: 0;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
 }
+
+.meter-container { width: 100%; height: 4px; background: #ddd; margin-top: 5px; }
+.meter-bar { height: 100%; background: #4cd137; width: 0%; }

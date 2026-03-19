@@ -5,50 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>מחשבון פיננסי</title>
     <link rel="stylesheet" href="fin.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
-    <div class="finance-container">
-        <h2>מחשבון החזר הלוואה</h2>
+    <div class="calculator">
+        <div class="display-area">
+            <input type="text" id="display" readonly placeholder="0">
+        </div>
         
-        <label>סכום ההלוואה:</label>
-        <input type="number" id="loanAmount">
-
-        <label>ריבית שנתית (%):</label>
-        <input type="number" id="interestRate" value="5">
-
-        <label>החזר חודשי מבוקש:</label>
-        <input type="number" id="monthlyPayment">
-
-        <button class="calc-btn" onclick="calculateLoan()">חשב זמן החזר</button>
-
-        <div class="result-box" id="result">התוצאה תופיע כאן</div>
-
-        <div class="player-controls">
-            <button onclick="playAudio()">נגן ▶️</button>
-            <button onclick="pauseAudio()">השהה ⏸</button>
-            <button onclick="deleteAudio()">מחק 🗑️</button>
-            <button onclick="exportAudio()">ייצוא 📤</button>
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendOperator('/')">/</button>
+            <button onclick="appendOperator('*')">*</button>
+            <button onclick="appendOperator('-')">-</button>
+            
+            <button onclick="appendOperator('+')">+</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('7')">7</button>
+            
+            <button onclick="calculate()">=</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('4')">4</button>
+            
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('1')">1</button>
         </div>
 
-        <div class="version-tag">Version 1.0.5</div>
-
-        <a href="../math_calc/math.html" class="nav-button">למחשבון מתמטי ⮕</a>
-    </div>
-
-    <div id="exportModal" class="modal" hidden>
-        <div class="modal-content">
-            <h3>בחר יעד לייצוא</h3>
-            <div class="modal-buttons">
-                <button onclick="processExport('disk')">💾 שמירה בשם לדיסק</button>
-                <button onclick="processExport('whatsapp')">💬 שליחה בוואטסאפ</button>
-                <button onclick="processExport('gmail')">📧 שליחה ב-Gmail</button>
-                <button onclick="processExport('share')">📱 שיתוף מערכתי אחר</button>
-                <button class="cancel-btn" onclick="closeExportModal()">ביטול</button>
+        <div class="mic-panel">
+            <div class="slider-row">
+                <input type="range" id="gainSlider" min="0" max="2" step="0.1" value="0.8">
             </div>
+            <div id="gainValue" class="gain-label">0.8</div>
+            <div class="meter-container">
+                <div id="volumeMeter" class="meter-bar"></div>
+            </div>
+        </div>
+
+        <div class="player-controls">
+             <button id="startRec" onclick="startRecording()">🎙️ הקלט</button>
+             <button id="stopRec" onclick="stopRecording()" disabled>⏹ עצור</button>
+             <button id="playRec" onclick="playAudio()">🔊 נגן</button>
+             <button id="pauseRec" onclick="pauseAudio()">⏸ השהה</button>
+             <button id="exportBtn" onclick="exportAudio()">💾 ייצוא</button>
+             <button id="deleteBtn" onclick="deleteAudio()">🗑️ מחיקה</button>
+        </div>
+
+        <div class="nav-container">
+            <a href="../math_calc/math.html" class="nav-button">למחשבון מתמטי ⬅</a>
         </div>
     </div>
 
     <script src="../db_core.js"></script>
+    <script src="../recorder.js"></script>
     <script src="../player.js"></script>
     <script src="fin.js"></script>
 </body>

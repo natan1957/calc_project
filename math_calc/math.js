@@ -1,22 +1,43 @@
-const display = document.getElementById('display');
+/* PROTOCOL: SURGICAL ALIGNMENT
+   FILE: math.js
+   DESCRIPTION: Calculator logic with safety-check for eval.
+*/
 
-window.onload = () => {
-    const saved = localStorage.getItem('shared_result');
-    if (saved) display.value = saved;
-};
+let display = document.getElementById('display');
 
-function appendNumber(num) { display.value += num; }
-function appendOperator(op) { display.value += op; }
-function clearDisplay() { display.value = ''; }
+function appendNumber(number) {
+    display.value += number;
+}
+
+function appendOperator(operator) {
+    display.value += ' ' + operator + ' ';
+}
+
+function clearDisplay() {
+    display.value = '';
+}
 
 function calculate() {
     try {
-        const result = eval(display.value);
-        display.value = result;
-        localStorage.setItem('shared_result', result);
-    } catch (e) { display.value = "שגיאה"; }
+        // ניקוי רווחים מיותרים לפני ה-eval כדי למנוע שגיאות תחביר
+        let expression = display.value.trim();
+        if (expression === "") return;
+        
+        display.value = eval(expression);
+    } catch (error) {
+        display.value = 'Error';
+        setTimeout(clearDisplay, 1500);
+    }
 }
 
-// מיפוי פונקציות הנגן המשותף לכפתורי המחשבון הזה
-function playLocalRecording() { playAudio(); }
-function deleteRecording() { deleteAudio(); }
+// עדכון ויזואלי של ערך ה-Gain בסליידר
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('gainSlider');
+    const gainValue = document.getElementById('gainValue');
+    
+    if (slider && gainValue) {
+        slider.addEventListener('input', () => {
+            gainValue.innerText = slider.value;
+        });
+    }
+});
