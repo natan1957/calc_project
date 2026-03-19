@@ -1,6 +1,8 @@
 /* PROTOCOL: OPERATING ROOM 
    FILE: recorder.js 
 */
+console.log("Recorder Loaded: 19/03/2026 18:46");
+
 let mediaRecorder;
 let audioChunks = [];
 let audioContext;

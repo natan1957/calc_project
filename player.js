@@ -1,6 +1,8 @@
 /* PROTOCOL: OPERATING ROOM 
    FILE: player.js 
 */
+console.log("Player Loaded: 19/03/2026 18:09");
+
 let lastPosition = 0; // שמירת מיקום השמעה לטובת המשך (Resume)
 
 async function playAudio() {
