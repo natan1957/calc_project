@@ -1,7 +1,7 @@
 /* PROTOCOL: OPERATING ROOM 
    FILE: recorder.js 
 */
-console.log("Recorder Loaded: 19/03/2026 18:46");
+console.log("Recorder Loaded: 19/03/2026 23:58");
 
 let mediaRecorder;
 let audioChunks = [];
@@ -9,6 +9,21 @@ let audioContext;
 let audioStream;
 let gainNode;
 let animationId;
+
+// זיהוי הפורמט הנתמך הטוב ביותר עבור הנייד
+function getSupportedMimeType() {
+    const types = [
+        'audio/webm;codecs=opus',
+        'audio/mp4',
+        'audio/ogg;codecs=opus',
+        'audio/webm',
+        'audio/wav'
+    ];
+    for (const type of types) {
+        if (MediaRecorder.isTypeSupported(type)) return type;
+    }
+    return '';
+}
 
 async function startRecording() {
     audioChunks = [];
@@ -43,30 +58,36 @@ async function startRecording() {
             analyser.getByteFrequencyData(dataArray);
             let average = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
             meterBar.style.width = Math.min(average * 1.5, 100) + "%";
-            if (mediaRecorder && mediaRecorder.state === "recording") animationId = requestAnimationFrame(updateMeter);
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                animationId = requestAnimationFrame(updateMeter);
+            }
         }
 
-        mediaRecorder = new MediaRecorder(destination.stream);
-        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+        const mimeType = getSupportedMimeType();
+        console.log("Using MIME type:", mimeType);
+
+        mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
+        
+        mediaRecorder.ondataavailable = e => { 
+            if (e.data.size > 0) audioChunks.push(e.data); 
+        };
         
         mediaRecorder.onstop = async () => {
             cancelAnimationFrame(animationId);
-            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            
+            // יצירת ה-Blob עם ה-Type המדויק שנתמך
+            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
+            
             const db = await openDB();
             if (db) {
                 const tx = db.transaction(STORE_NAME, "readwrite");
-                tx.objectStore(STORE_NAME).put(blob, "audio_file");
+                const store = tx.objectStore(STORE_NAME);
+                await store.put(blob, "audio_file");
             }
 
-            // איפוס מחוונים ויזואליים בסיום ההקלטה
             if (meterBar) meterBar.style.width = "0%";
-            if (slider) {
-                slider.value = 0;
-                if (gainDisplay) gainDisplay.innerText = "0";
-            }
-
             if (audioStream) audioStream.getTracks().forEach(t => t.stop());
-            if (audioContext) audioContext.close();
+            if (audioContext && audioContext.state !== 'closed') audioContext.close();
         };
 
         mediaRecorder.start();
