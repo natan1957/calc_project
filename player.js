@@ -1,12 +1,13 @@
 /* PROTOCOL: OPERATING ROOM 
    FILE: player.js 
 */
-console.log("Player Loaded: 19/03/2026 21:05");
+console.log("Player Loaded: 19/03/2026 21:40");
 
-let lastPosition = 0; // שמירת מיקום השמעה לטובת המשך (Resume)
+let lastPosition = 0; 
+let currentBlobUrl = null;
 
 async function playAudio() {
-    // צעד קריטי לנייד: יצירת אובייקט האודיו מיד עם הלחיצה
+    // שלב 1: הכנת אובייקט האודיו
     if (!window.currentAudio) {
         window.currentAudio = new Audio();
     }
@@ -16,37 +17,36 @@ async function playAudio() {
     const tx = db.transaction(STORE_NAME, "readonly");
     const req = tx.objectStore(STORE_NAME).get("audio_file");
 
-    req.onsuccess = () => {
+    req.onsuccess = async () => {
         const blob = req.result;
         if (!blob) { 
             alert("לא נמצאה הקלטה בזיכרון."); 
             return; 
         }
         
-        const url = URL.createObjectURL(blob);
+        // שלב 2: ניקוי כתובת קודמת אם קיימת
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
         
-        // טעינה וניגון ישיר של ה-Blob שנשלף
-        loadAndPlay(url);
+        currentBlobUrl = URL.createObjectURL(blob);
+        window.currentAudio.src = currentBlobUrl;
+        window.currentAudio.currentTime = lastPosition;
 
-        function loadAndPlay(audioUrl) {
-            window.currentAudio.src = audioUrl;
-            window.currentAudio.currentTime = lastPosition;
-            
-            // שימוש באירוע canplay כדי לוודא שהדפדפן מוכן להשמיע
-            window.currentAudio.oncanplay = () => {
-                window.currentAudio.play()
-                    .then(() => console.log("Playback started"))
-                    .catch(err => {
-                        console.error("Playback failed:", err);
-                        alert("השמעה נכשלה. נסה להקליט שוב.");
-                    });
-                window.currentAudio.oncanplay = null; 
-            };
+        // שלב 3: ניסיון ניגון אגרסיבי (מתאים לנייד)
+        try {
+            await window.currentAudio.play();
+            console.log("Playback started successfully");
+        } catch (err) {
+            console.warn("Autoplay blocked or failed, retrying with load...");
             window.currentAudio.load();
+            window.currentAudio.play().catch(e => {
+                console.error("Final playback error:", e);
+                alert("הדפדפן חוסם ניגון אוטומטי. נסה ללחוץ שוב.");
+            });
         }
 
         window.currentAudio.onended = () => {
-            URL.revokeObjectURL(url);
             lastPosition = 0; 
         };
     };
