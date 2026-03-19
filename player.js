@@ -4,6 +4,11 @@
 let lastPosition = 0; // שמירת מיקום השמעה לטובת המשך (Resume)
 
 async function playAudio() {
+    // צעד קריטי לנייד: יצירת אובייקט האודיו מיד עם הלחיצה לפני כל await
+    if (!window.currentAudio) {
+        window.currentAudio = new Audio();
+    }
+
     const db = await openDB();
     if (!db) return;
     const tx = db.transaction(STORE_NAME, "readonly");
@@ -15,15 +20,27 @@ async function playAudio() {
         
         const url = URL.createObjectURL(blob);
         
-        // אם האודיו קיים וכבר הופסק באמצע - המשך נגינה
-        if (window.currentAudio && window.currentAudio.paused && window.currentAudio.currentTime > 0) {
-            window.currentAudio.play();
+        // אם האודיו קיים, טעון ב-Blob הנכון, וב-Pause - פשוט נגן
+        if (window.currentAudio.src.startsWith('blob:') && window.currentAudio.paused && lastPosition > 0) {
+            window.currentAudio.play().catch(() => {
+                // במקרה של שגיאה ב-Blob הישן, נטען מחדש
+                loadAndPlay(url);
+            });
         } else {
-            // טעינה מחדש ודילוג למיקום האחרון שנשמר
-            if (window.currentAudio) window.currentAudio.pause();
-            window.currentAudio = new Audio(url);
+            // טעינה ראשונית או רענון
+            loadAndPlay(url);
+        }
+
+        function loadAndPlay(audioUrl) {
+            window.currentAudio.src = audioUrl;
             window.currentAudio.currentTime = lastPosition;
-            window.currentAudio.play();
+            
+            // שימוש באירוע כדי למנוע לחיצה כפולה - מנגן כשהקובץ מוכן
+            window.currentAudio.oncanplay = () => {
+                window.currentAudio.play().catch(err => console.error("Playback failed:", err));
+                window.currentAudio.oncanplay = null; // ניקוי האירוע
+            };
+            window.currentAudio.load();
         }
 
         window.currentAudio.onended = () => {
@@ -48,6 +65,7 @@ async function deleteAudio() {
     tx.oncomplete = () => {
         alert("נמחק.");
         lastPosition = 0;
+        if (window.currentAudio) window.currentAudio.src = "";
     };
 }
 
